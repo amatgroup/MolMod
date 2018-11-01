@@ -2,7 +2,7 @@
 #
 # Andriy Zhugayevych (azh@ukr.net), Sergei Matveev(matseralex@yandex.ru)
 # www.zhugayevych.me/python/SSHTools/index.htm
-# created 21.08.2014, modified 4.11.2016
+# created 21.08.2014, modified 2.11.2018
 
 import paramiko
 import os
@@ -15,7 +15,7 @@ class SSHTools:
     if profile:
       if profile=="skoltech":
         self.user="Andriy.Zhugayevych"
-        self.host="cluster.skoltech.ru"
+        self.host="pardus.skoltech.ru"
         pkey2="C:/Users/azh/Sys/Internet/SSH/skoltech/key2.ppk"
       else:
         raise Warning("Unrecognized profile")
