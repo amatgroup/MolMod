@@ -6,7 +6,7 @@ import setuptools, os
 setuptools.setup(
     name="molmod",
     version="0.0.2",
-    author="Andriy Zhugayevych",
+    author="Andriy Zhugayevych, Sergey Matveev, Dmitry Aksenov",
     description="Manager for QC calculations",
     # long_description=long_description,
     # long_description_content_type="text/markdown",
