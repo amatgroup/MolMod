@@ -1,0 +1,3 @@
+recursive-include molmod bin.evc 
+recursive-include molmod bin.evl
+recursive-include molmod bin.s1e
