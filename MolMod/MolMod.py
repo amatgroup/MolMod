@@ -115,7 +115,7 @@ class MolMod:
 
 
 ###############################################################################################
-  def SubmitJob(self, filename, q="", ppn=1, tag="", mem=5, after="", test=False, printout = False, overwrite = False):
+  def SubmitJob(self, filename, q="", ppn=1, mem=3, time=1, after="", test=False, printout = False, overwrite = False):
     filename_without_path = filename.split('/')[len(filename.split('/'))-1]
     if self.ssh.fexists(self.gau_fld+filename_without_path):
       print('job with this name exists')
@@ -154,16 +154,16 @@ class MolMod:
       if not if_nproc:
         f_lines.insert(_i, '%nproc='+str(ppn)+'\n')
       if not if_mem:
-        f_lines.insert(_i, '%mem='+str(mem * ppn)+'GB\n')
+        f_lines.insert(_i, '%mem='+str(mem)+'GB\n')
     else:
       if nproc_in_input_file != ppn:
         if printout:
           print("correcting number of processors in input file")
       f_lines[n_proc_line_number] = "%nproc="+str(ppn)+'\n'
-      if mem_in_input_file != (mem * ppn):
+      if mem_in_input_file != (mem):
         if printout:
           print("correcting memory request in input file")
-      f_lines[mem_line_number]="%mem="+str( mem * ppn )+'GB\n'
+      f_lines[mem_line_number]="%mem="+str(mem)+'GB\n'
     # correct input if needed
     local_f.close()
     local_f = open(filename, 'w')
@@ -176,12 +176,13 @@ class MolMod:
       print("IT WAS TEST: corrected cluster request parameters only in local file")
     del f_lines
     #generate command
-    
-    command = ""
-    command += "qsub " + self.gau_pbs + " -l nodes=1" + ":ppn=" + str(ppn)
-    if tag:
-      command += ":" + tag
-    command +=" -N "+ filename_without_path.split('.')[0]
+    tstr=""
+    if time>0:
+      tstr=str(',walltime={}:{:02}:{:02}'.format(int(time),int(3600*time%3600//60),int(3600*time%60)))
+    qstr=""
+    if q!="":
+      qstr=" -q "+q
+    command = "qsub " + self.gau_pbs + " -N "+ filename_without_path.split('.')[0] + " -l nodes=1:ppn=" + str(ppn) + ",mem=" + str(mem) + "gb" + tstr + qstr + after
     print(command)
     #Check testing options before execution on the remote machine
     if test:
