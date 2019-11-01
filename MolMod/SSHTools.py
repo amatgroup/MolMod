@@ -2,21 +2,32 @@
 #
 # Andriy Zhugayevych (azh@ukr.net), Sergei Matveev(matseralex@yandex.ru)
 # www.zhugayevych.me/python/SSHTools/index.htm
-# created 21.08.2014, modified 2.11.2018
+# created 21.08.2014, modified 1.11.2019
 
 import paramiko
 import os
 import hashlib
 
 class SSHTools:
-  user=""; host=""; pkey=""; port=22
+  user=""; host=""; ppk=""; pbs=""; port=22
 ###############################################################################################
-  def setup( self, profile="", user="", host="", pkey="", port=22 ):
+  def setup( self, profile="", user="", host="", ppk="", pbs="", port=22 ):
     if profile:
-      if profile=="skoltech":
+      if profile=="pardus":
         self.user="Andriy.Zhugayevych"
         self.host="pardus.skoltech.ru"
-        pkey2="C:/Users/azh/Sys/Internet/SSH/skoltech/key2.ppk"
+        self.ppk="C:/Users/azh/Sys/Internet/SSH/pardus/key2.ppk"
+        self.pbs="MOAB"
+      if profile=="magnus":
+        self.user="a.zhugayevych"
+        self.host="10.30.16.168"
+        self.ppk="C:/Users/azh/Sys/Internet/SSH/magnus/key2.ppk"
+        self.pbs="SLURM"
+      if profile=="cmsVM":
+        self.user="a.zhugayevych"
+        self.host="10.30.16.165"
+        self.ppk="C:/Users/azh/Sys/Internet/SSH/cmsVM/key2.ppk"
+        self.pbs="SLURM"
       else:
         raise Warning("Unrecognized profile")
     else:
@@ -24,12 +35,14 @@ class SSHTools:
         self.user = user
       if host:
         self.host = host
-      if pkey:
-        pkey2 = pkey
+      if ppk:
+        self.ppk = ppk
+      if pbs:
+        self.pbs = pbs
     self.port = port
     self.ssh = paramiko.SSHClient()
     self.ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    self.pkey = paramiko.RSAKey.from_private_key_file(pkey2)
+    self.pkey = paramiko.RSAKey.from_private_key_file(self.ppk)
     return
 ###############################################################################################
   def run( self, command, noerror=False, printout=False ):
@@ -57,7 +70,10 @@ class SSHTools:
     return ("".join(out)).strip()
 ###############################################################################################
   def qstat( self ):
-    s=self.run( "qstat -u "+self.user, printout=True )
+    if self.pbs=="MOAB":
+      s=self.run( "qstat -u "+self.user, printout=True )
+    if self.pbs=="SLURM":
+      s=self.run( "squeue -u "+self.user, printout=True )
     return
 ###############################################################################################
   def put( self, source, dest ):

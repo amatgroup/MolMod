@@ -2,7 +2,7 @@
 #
 # Andriy Zhugayevych (azh@ukr.net), Sergei Matveev(matseralex@yandex.ru)
 # www.zhugayevych.me/python/MolMod/index.htm
-# created 20.08.2014, modified 5.11.2016
+# created 20.08.2014, modified 1.11.2019
 
 import os
 import numpy
@@ -111,14 +111,15 @@ class MolMod:
     geometry.close()
 
     if printout:
-        print("finished sucsessfully")
+        print("finished successfully")
 
 
 ###############################################################################################
   def SubmitJob(self, filename, q="", ppn=1, mem=3, time=1, after="", test=False, printout = False, overwrite = False):
     filename_without_path = filename.split('/')[len(filename.split('/'))-1]
-    if self.ssh.fexists(self.gau_fld+filename_without_path):
-      print('job with this name exists')
+    filename_without_pathandext = filename_without_path.split('.')[0]
+    if self.ssh.fexists(self.gau_fld+filename_without_pathandext+self.xout):
+      print('output exists')
       if overwrite:
         print('overwrite it')
       else:
@@ -178,11 +179,18 @@ class MolMod:
     #generate command
     tstr=""
     if time>0:
-      tstr=str(',walltime={}:{:02}:{:02}'.format(int(time),int(3600*time%3600//60),int(3600*time%60)))
+      tstr=str('{}:{:02}:{:02}'.format(int(time),int(3600*time%3600//60),int(3600*time%60)))
+      if self.ssh.pbs=="MOAB":
+        tstr=",walltime="+tstr
+      if self.ssh.pbs=="SLURM":
+        tstr=" -t "+tstr
     qstr=""
     if q!="":
       qstr=" -q "+q
-    command = "qsub " + self.gau_pbs + " -N "+ filename_without_path.split('.')[0] + " -l nodes=1:ppn=" + str(ppn) + ",mem=" + str(mem) + "gb" + tstr + qstr + after
+    if self.ssh.pbs=="MOAB":
+      command = "qsub " + self.gau_pbs + " -N "+ filename_without_pathandext + " -l nodes=1:ppn=" + str(ppn) + ",mem=" + str(mem) + "gb" + tstr + qstr + after
+    if self.ssh.pbs=="SLURM":
+      command = self.gau_pbs + " -J "+ filename_without_pathandext + " -n " + str(ppn) + tstr + qstr + after
     print(command)
     #Check testing options before execution on the remote machine
     if test:
