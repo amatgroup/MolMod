@@ -2,7 +2,7 @@
 #
 # Andriy Zhugayevych (azh@ukr.net), Sergei Matveev(matseralex@yandex.ru)
 # www.zhugayevych.me/python/SSHTools/index.htm
-# created 21.08.2014, modified 1.11.2019
+# created 21.08.2014, modified 19.11.2019
 
 import paramiko
 import os
@@ -18,12 +18,12 @@ class SSHTools:
         self.host="pardus.skoltech.ru"
         self.ppk="C:/Users/azh/Sys/Internet/SSH/pardus/key2.ppk"
         self.pbs="MOAB"
-      if profile=="magnus":
+      elif profile=="magnus":
         self.user="a.zhugayevych"
         self.host="10.30.16.168"
         self.ppk="C:/Users/azh/Sys/Internet/SSH/magnus/key2.ppk"
         self.pbs="SLURM"
-      if profile=="cmsVM":
+      elif profile=="cmsVM":
         self.user="a.zhugayevych"
         self.host="10.30.16.165"
         self.ppk="C:/Users/azh/Sys/Internet/SSH/cmsVM/key2.ppk"

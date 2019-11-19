@@ -1,5 +1,5 @@
 %rwf=test.rwf
-%mem=10GB
+%mem=5GB
 %nproc=2
 # B3LYP 6-31g  TD(singlets,nstates=4)
 

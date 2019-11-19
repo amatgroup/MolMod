@@ -2,7 +2,7 @@
 #
 # Andriy Zhugayevych (azh@ukr.net), Sergei Matveev(matseralex@yandex.ru)
 # www.zhugayevych.me/python/MolMod/index.htm
-# created 20.08.2014, modified 1.11.2019
+# created 20.08.2014, modified 19.11.2019
 
 import os
 import numpy
@@ -190,7 +190,7 @@ class MolMod:
     if self.ssh.pbs=="MOAB":
       command = "qsub " + self.gau_pbs + " -N "+ filename_without_pathandext + " -l nodes=1:ppn=" + str(ppn) + ",mem=" + str(mem) + "gb" + tstr + qstr + after
     if self.ssh.pbs=="SLURM":
-      command = self.gau_pbs + " -J "+ filename_without_pathandext + " -n " + str(ppn) + tstr + qstr + after
+      command = "sbatch -J "+ filename_without_pathandext + " -c " + str(ppn) + tstr + qstr + after + " " + self.gau_pbs
     print(command)
     #Check testing options before execution on the remote machine
     if test:

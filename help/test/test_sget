@@ -11,6 +11,7 @@ module load QCh/Gaussian/16.RevA03/AVX
 export RUN_DIR=~/gaussian/
 export GAUSS_SCRDIR=$TMPDIR
 export GAUSS_LFLAGS2="--LindaOptions -s 10000000"
+export GAUSS_RDEF="MaxDisk=150GB"
 
 rm -rf $GAUSS_SCRDIR
 mkdir -p $GAUSS_SCRDIR
