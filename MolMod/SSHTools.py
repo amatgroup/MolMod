@@ -76,10 +76,20 @@ class SSHTools:
       s=self.run( "squeue -u "+self.user, printout=True )
     return
 ###############################################################################################
-  def put( self, source, dest ):
+  def put( self, source, dest, mkdir=False ):
     self.ssh.connect(self.host,username=self.user,pkey=self.pkey,port=self.port)
     sftp = self.ssh.open_sftp()
-    sftp.put(source,dest)
+    if mkdir:
+      remote_path = os.path.dirname(dest)
+      source_file = os.path.basename(source)
+      try:
+          sftp.chdir(remote_path)  # Test if remote_path exists
+      except IOError:
+          sftp.mkdir(remote_path)  # Create remote_path
+          sftp.chdir(remote_path)
+      sftp.put(source, './'+source_file)    # At this point, you are in remote_path in either case
+    else:
+      sftp.put(source,dest)
     sftp.close()
     self.ssh.close()
     return
